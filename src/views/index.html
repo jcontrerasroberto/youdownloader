@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar Música</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/behavor.js"></script>
+    <script src="js/download.js"></script>
+</head>
+
+<body>
+    <div class="container p-4">
+        <form class="navbar-form navbar-left" role="search">
+            <div class="row">
+                <div class="col-md-10">
+                    <input type="text" id="search-bar" class="form-control" placeholder="Buscar cancion">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn btn-primary" onclick="searchVideo(event)">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="list-group">
+                    <div class="list-group" id="songs-list">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="row">
+                    <h4>Canciones a descargar</h4>
+                    <ul class="list-group" id="added-songs">
+                    </ul>
+
+                </div>
+                <BR>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Nombre carpeta para guardar</label>
+                        <input type="text" class="form-control" id="dirnameinput"
+                                aria-describedby="NombreCarpeta" placeholder="Nombre">
+                    </div>
+                </div>
+                <div class="row">
+                    <br>
+                    <button class="btn btn-success btn-md" onclick="downloadListMp3()">Descargar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
