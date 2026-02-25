@@ -1,24 +1,35 @@
 {
   "name": "YouDownload",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Descargador de videos moderno",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "build": "electron-builder",
+    "postinstall": "chmod +x resources/linux/yt-dlp || true"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "electron": "^10.1.1",
-    "electron-prompt": "^1.6.0",
-    "electron-reload": "^1.5.0",
-    "smalltalk": "^4.0.6",
-    "youtube-dl": "git+https://github.com/przemyslawpluta/node-youtube-dl.git",
-    "ytdl-core": "^3.2.2"
+    "electron-prompt": "^1.7.0",
+    "yt-dlp-exec": "^1.0.2"
   },
   "devDependencies": {
-    "electron-builder": "^22.8.1"
+    "electron": "^31.0.0", 
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.youdownload.app",
+    "productName": "YouDownload",
+    "directories": {
+      "output": "dist"
+    },
+    "extraResources": [
+      {
+        "from": "resources/${os}",
+        "to": "bin",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": { "target": "nsis" },
+    "linux": { "target": "AppImage" }
   }
 }

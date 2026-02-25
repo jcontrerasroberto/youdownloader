@@ -1,60 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouDownload - MP3</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <style>
+      body {
+        background-color: #f4f7f6;
+        color: #333;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descargar Música</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script src="js/behavor.js"></script>
-    <script src="js/download.js"></script>
-</head>
+      /* Contenedor de la lista de descarga */
+      #added-songs {
+        padding: 0;
+      }
 
-<body>
+      #added-songs .list-group-item {
+        background: #fff;
+        border: none;
+        border-radius: 8px !important;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        transition: transform 0.2s;
+      }
+
+      #added-songs .list-group-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .video-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      .video-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 4px;
+      }
+
+      /* Estados de descarga */
+      .status-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+      .status-pending {
+        background: #e9ecef;
+        color: #6c757d;
+      }
+      .status-success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .btn-delete {
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        line-height: 30px;
+      }
+    </style>
+  </head>
+  <body>
     <div class="container p-4">
-        <form class="navbar-form navbar-left" role="search">
-            <div class="row">
-                <div class="col-md-10">
-                    <input type="text" id="search-bar" class="form-control" placeholder="Buscar cancion">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn btn-primary" onclick="searchVideo(event)">Buscar</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="container">
+      <div class="navbar-form">
         <div class="row">
-            <div class="col-md-7">
-                <div class="list-group">
-                    <div class="list-group" id="songs-list">
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="row">
-                    <h4>Canciones a descargar</h4>
-                    <ul class="list-group" id="added-songs">
-                    </ul>
-
-                </div>
-                <BR>
-                <div class="row">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Nombre carpeta para guardar</label>
-                        <input type="text" class="form-control" id="dirnameinput"
-                                aria-describedby="NombreCarpeta" placeholder="Nombre">
-                    </div>
-                </div>
-                <div class="row">
-                    <br>
-                    <button class="btn btn-success btn-md" onclick="downloadListMp3()">Descargar</button>
-                </div>
-            </div>
+          <div class="col-md-10">
+            <input
+              type="text"
+              id="query"
+              class="form-control"
+              placeholder="Buscar canción en YouTube..."
+            />
+          </div>
+          <div class="col-md-2">
+            <button
+              id="search-button"
+              class="btn btn-primary btn-block"
+              onclick="search()"
+            >
+              Buscar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-</body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h4>Resultados</h4>
+          <div class="list-group" id="songs-list"></div>
+        </div>
+        <div class="col-md-5">
+          <h4>Lista de descarga</h4>
+          <ul class="list-group" id="added-songs"></ul>
 
+          <hr style="border-color: #444" />
+          <div class="form-group">
+            <label>Nombre de carpeta en Escritorio</label>
+            <input
+              type="text"
+              class="form-control"
+              id="dirnameinput"
+              placeholder="Ej: MisCanciones"
+            />
+          </div>
+          <button class="btn btn-success btn-block" onclick="downloadListMp3()">
+            Descargar todo en MP3
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/behavor.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/download.js"></script>
+  </body>
 </html>

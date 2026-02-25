@@ -1,50 +1,64 @@
 function downloadListMp3() {
-  const ytdl = require('youtube-dl');
-  const os = require('os');
-  const path = require('path');
+    const dirnameinput = document.getElementById("dirnameinput");
+    
+    // 1. Validación robusta: .trim() es vital para evitar carpetas con solo espacios
+    const dirname = dirnameinput.value.trim();
 
-  dirname = document.getElementById("dirnameinput").value;
+    if (!dirname) {
+        alert("⚠️ Error: Por favor, escribe un nombre para la carpeta antes de descargar.");
+        dirnameinput.classList.add("is-invalid"); // Opcional: Resaltar en rojo si usas Bootstrap
+        dirnameinput.focus();
+        return; // Salida limpia: no bloquea el resto de scripts
+    }
 
-  if (dirname === null || dirname === "") {
-    alert("Ingresa un nombre de carpeta");
-    return 1;
-  }
-  var homeDir;
-  if (process.platform === "win32") homeDir = path.join(os.homedir(), "Desktop");
-  else homeDir = os.homedir();
+    if (songs.length === 0) {
+        alert("No hay canciones en la lista para descargar.");
+        return;
+    }
 
-  alert(homeDir + "/" + dirname);
+    // 2. Si pasa la validación, procedemos
+    dirnameinput.classList.remove("is-invalid");
+    totalDescargados = 0;
 
+    songs.forEach(url => {
+        const idVideo = url.split('v=')[1];
+        const statusEl = document.getElementById(`status-${idVideo}`);
+        
+        if (statusEl) {
+            statusEl.innerText = "Descargando...";
+            statusEl.className = "status-badge status-pending";
+        }
 
-  songs.forEach(element => {
-    var name;
-    var idvideo;
-    ytdl.getInfo(element, function (err, info) {
-      'use strict'
-      if (err) {
-        throw err
-      }
-      name = info.title;
-      idvideo = info.id;
-      console.log('title:', name)
-      document.getElementById(idvideo).innerText= "Descargando - "+name +"...";
+        window.api.descargarMp3({ url, folderName: dirname });
     });
-    //ytdl(element, {filter: 'audioonly'}).pipe(fs.createWriteStream('audioVideo.mp3'));
-    ytdl.exec(element, ['-x', '--audio-format', 'mp3', '-o', homeDir + "/" + dirname + '/%(title)s.%(ext)s'], {}, function exec(
-      err,
-      output
-    ) {
-      'use strict'
-      if (err) {
-        document.getElementById(idvideo).innerText= "ERROR -" + name;
-        throw err;
-      } else {
-        document.getElementById(idvideo).innerText= "Descargado -"+ name;
-        console.log(output)
-      }
-      
+}
 
-    })
-  });
+// Escuchar actualizaciones de estado
+let totalDescargados = 0;
 
+window.api.onStatusUpdate((data) => {
+    const { id, status } = data;
+    const statusEl = document.getElementById(`status-${id}`);
+    
+    if (statusEl) {
+        statusEl.innerText = status;
+        statusEl.className = status === 'Completado' ? 'status-badge status-success' : 'status-badge status-error';
+        
+        // Incrementar contador si terminó (con éxito o error)
+        totalDescargados++;
+
+        // Si ya procesamos todos los videos de la lista
+        if (totalDescargados === songs.length) {
+            setTimeout(() => {
+                alert("Todas las descargas han finalizado.");
+                limpiarListaCompleta();
+            }, 1500); // Esperar un poco para que el usuario vea el "Completado"
+        }
+    }
+});
+
+function limpiarListaCompleta() {
+    songs = []; // Vaciar array global
+    totalDescargados = 0;
+    document.getElementById("added-songs").innerHTML = ""; // Limpiar UI
 }
