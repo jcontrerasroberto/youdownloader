@@ -4,17 +4,27 @@
   "description": "Descargador de videos moderno",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron-forge start",
     "build": "electron-builder",
-    "postinstall": "chmod +x resources/linux/yt-dlp || true"
+    "postinstall": "chmod +x resources/linux/yt-dlp || true",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "electron-prompt": "^1.7.0",
+    "electron-squirrel-startup": "^1.0.1",
     "yt-dlp-exec": "^1.0.2"
   },
   "devDependencies": {
-    "electron": "^31.0.0", 
-    "electron-builder": "^24.13.3"
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^31.0.0"
   },
   "build": {
     "appId": "com.youdownload.app",
@@ -26,10 +36,51 @@
       {
         "from": "resources/${os}",
         "to": "bin",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
-    "win": { "target": "nsis" },
-    "linux": { "target": "AppImage" }
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "extraResource": [
+          "./resources/linux/yt-dlp",
+          "./resources/win/yt-dlp.exe"
+        ],
+        "packagerConfig": {
+          "icon": "./src/views/img/YouDownload"
+        }
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "YouDownloader"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "options": {
+              "icon": "./src/views/img/YouDownload.png"
+            }
+          }
+        }
+      ]
+    }
   }
 }
