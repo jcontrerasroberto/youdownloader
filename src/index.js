@@ -6,13 +6,21 @@ const os = require("os");
 let mainWindow;
 
 function getBinaryPath() {
-  const isDev = !app.isPackaged;
-  const platform = process.platform === "win32" ? "win" : "linux";
-  const binaryName = process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp";
+    const isWin = process.platform === 'win32';
+    //const folder = isWin ? 'win' : 'linux';
+    const filename = isWin ? 'yt-dlp.exe' : 'yt-dlp';
 
-  return isDev
-    ? path.join(__dirname, "../resources", platform, binaryName)
-    : path.join(process.resourcesPath, "bin", binaryName);
+    // baseDir detecta dónde está la raíz de la app según el entorno
+    const baseDir = app.isPackaged 
+        ? process.resourcesPath  // En /usr/lib/youdownload/resources/
+        : app.getAppPath();      // En tu carpeta de desarrollo
+
+    // IMPORTANTE: Eliminamos el 'resources' extra de aquí si estamos en producción
+    if (app.isPackaged) {
+        return path.join(baseDir, filename);
+    } else {
+        return path.join(baseDir, 'resources',                                                  filename);
+    }
 }
 
 app.on("ready", () => {
@@ -30,6 +38,9 @@ app.on("ready", () => {
 
 ipcMain.on("iniciar-descarga-mp3", (event, { url, folderName }) => {
   const binPath = getBinaryPath();
+
+  console.log(`[DEBUG] Intentando ejecutar binario en: ${binPath}`);
+
   // Detectamos la carpeta "Music" o "Música" del sistema de forma agnóstica
   const musicDir = path.join(os.homedir(), "Music");
 
@@ -55,6 +66,9 @@ ipcMain.on("iniciar-descarga-mp3", (event, { url, folderName }) => {
     const idVideo = url.split("v=")[1] || url;
     if (error) {
       console.error(`Error en ${process.platform}:`, stderr);
+      console.error(`[ERROR] Falló la descarga del video ${idVideo}:`);
+      console.error(`Mensaje: ${error.message}`);
+      console.error(`Stderr: ${stderr}`);
       event.reply("status-descarga", { id: idVideo, status: "Error" });
     } else {
       event.reply("status-descarga", { id: idVideo, status: "Completado" });
